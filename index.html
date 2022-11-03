@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Intro to CSS!</title>
+    </head>
+
+    <body>
+        <h1>A long time ago...</h1>
+        <h2>...in a galaxy far far away</h2>
+        <!--giving each element an id allows us to pull it later for altering in the css section-->
+        <h2 id="thesecond">What a cool spaceship!</h2>
+        <!--<b>makes the word it wraps around bold-->
+        <p>X-wing starfighters were a type of <b>starfighter</b> marked by their distinctive S-foils that resembled the High Galactic script's character "X" in attack formation. They were heavily armed with four laser cannons on the S-foils and proton torpedo launchers in the fuselage. X-wings were designed for dogfighting and long missions. During the Galactic Civil War, the Rebel Alliance used X-wing models like the T-65B X-wing starfighter and T-65C-A2 X-wing in many battles, deploying X-wings in engagements such as the Attack on Lothal, the Battle of Yavin, the Battle of Endor, and the Battle of Jakku.</p>
+
+        <img src="img/xwing.png">
+
+        <p>The X-wing was descended from Incom Corporation's Clone Wars–era Fighter, namely the Aggressive ReConnaissance-170 starfighter, Clone Z-95 Headhunter, and Z-95 Headhunter. Incom's engineers strove to build a well-rounded, hyperdrive-equipped snubfighter with no exploitable weakness. The new starfighter was intended to become the backbone of the Imperial Navy, but political forces led to the Galactic Empire deciding to rely on Sienar Fleet Systems' more affordable TIE line. The Alliance to Restore the Republic then adopted the X-wing design as its own.</p>
+    </body>
+
+    <!--where CSS starts-->
+    <style>
+        /*body refers to everything that falls under the body section in the html section above*/
+        body {
+            background-color: antiquewhite;
+            /*ideally dont want it to be longer than 1000px*/
+            max-width: 900px;
+            margin: auto;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        img {
+            max-width: 100%;
+        }
+        /*when you get specific, it overrides what you did previously which was more general, such as what we did in "body". so what we do with h1 specifically, overrides the things we automatically did to it in body*/
+        h1 {
+            background-color: crimson;
+            color: white;
+        }
+
+        h2 {
+            background-color: indigo;
+            color: honeydew;
+        }
+
+        /*changes the width of all paras in html body*/
+        p {
+            max-width: 400px;
+        }
+        /*pulling the h2 we id'd earlier for specific alterations*/
+        #thesecond {
+            background-color: rgb(97, 194, 194);
+            color: blue;
+        }
+    </style>
+</html>
