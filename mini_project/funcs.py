@@ -71,20 +71,34 @@ def test_read_file_list():
     expected=['{"first_name":"john","last_name":"smith"}']
     actual=read_file_list("mock_file.csv")
     assert expected==actual
+# test_read_file_list()
 
 def test_append_to_file():
-    pass
+    append_to_file("mock_file.csv",'{"first_name":"tim","last_name":"roe"}')
+    expected=read_file_list("mock_file.csv")[-1]
+    assert expected=='{"first_name":"tim","last_name":"roe"}'
+# test_append_to_file()
 
 def test_write_to_file():
-    pass
+    write_to_file("mock_file.csv",['{"first_name":"john","last_name":"smith"}'])
+    expected=read_file_list("mock_file.csv")
+    assert expected==['{"first_name":"john","last_name":"smith"}']
+# test_write_to_file()
 
 def test_index_item():
-    pass
+    actual=index_item(['{"first_name":"john","last_name":"smith"}'])
+    expected=None
+    assert actual==expected
+# test_index_item()
 
 def test_int_input_limit():
-    pass
+    actual=int_input_limit("enter a number: ", 4)
+    expected=3
+    assert actual==expected
+# test_int_input_limit()
 
 def test_input_check():
-    pass
-
-test_read_file_list()
+    actual=input_check("enter a letter: ","str")
+    expected="hello"
+    assert expected==actual
+# test_input_check()

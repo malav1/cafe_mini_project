@@ -1,7 +1,7 @@
-{"name": "smoothie", "price": 3.0}
-{"name": "soup", "price": 2.5}
-{"name": "salad", "price": 4.0}
-{"name": "granola", "price": 4.3}
-{"name": "water", "price": 0.1}
-{"name": "pineapple", "price": 5.0}
-{"name": "apple", "price": 0.3}
+{"id": 0, "name": "smoothie", "price": 3.0}
+{"id": 1, "name": "soup", "price": 2.5}
+{"id": 2, "name": "salad", "price": 4.0}
+{"id": 3, "name": "granola", "price": 4.3}
+{"id": 748, "name": "water", "price": 0.1}
+{"id": 5, "name": "pineapple", "price": 5.0}
+{"id": 6, "name": "apple", "price": 0.3}
