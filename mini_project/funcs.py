@@ -76,8 +76,8 @@ def orders_delete_sql(ord_id,prod_id):
     connection.commit()
 
 #SINGLE FUNCS
-def print_sql(menu):
-    connection_var.execute(f'SELECT * FROM {menu}')
+def print_sql(table):
+    connection_var.execute(f'SELECT * FROM {table}')
     #gets headers
     col_names = [i[0] for i in connection_var.description]
     print(col_names)
@@ -90,9 +90,24 @@ def close_connection():
     connection_var.close()
     connection.close()
 
+ #checking if user id input exists in sql table id
+def valid_id(prompt, table):
+    connection_var.execute(f'SELECT * FROM {table}')
+    rows = connection_var.fetchall()
+    valid_ids=[row[0] for row in rows]
+    cont = True
+    while cont:
+        try:
+            int_value = int(input(prompt))
+            if int_value not in valid_ids:
+                print(f"\033[31mid {int_value} does not exist\033[0m")
+            else:
+                cont=False
+        except ValueError:
+            print("\033[31mYou can ONLY use numbers!\033[0m")
+    return int_value
 
-
-#int input error function where there is a max num user can input
+    #int input error function where there is a max num user can input
 def int_input_limit(prompt,num_limit):
     not_valid = True
     while not_valid:
@@ -107,7 +122,7 @@ def int_input_limit(prompt,num_limit):
     return int_value
 
 
-#int input error func- type of input simply needs to be int regardless of len
+    #int input error func- type of input simply needs to be int regardless of len
 def input_check(prompt,data_type):
     not_valid = True
 

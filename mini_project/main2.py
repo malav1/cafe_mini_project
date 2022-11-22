@@ -1,7 +1,7 @@
 #connection will stay open till the end. object is created at the start and connection is closed when the application ends. its expensive to keep opening and closing
 
 import ast
-from funcs import int_input_limit, input_check, print_sql, food_add_sql, courier_add_sql, delete_sql, close_connection, update_food_sql, update_courier_sql, order_add_sql, update_order_sql, orders_delete_sql
+from funcs import int_input_limit, input_check, print_sql, food_add_sql, courier_add_sql, delete_sql, close_connection, update_food_sql, update_courier_sql, order_add_sql, update_order_sql, orders_delete_sql, valid_id
 
 # user input for welcome menu- while loop to come back to welcome menu.
 continue_welcome=True
@@ -68,7 +68,7 @@ while continue_welcome:
             print()
             #showing food menu items and their ids via sql
             print_sql("food_menu")
-            item_id=input_check("\nplease enter the id of the item you would like to update: ","int")
+            item_id=valid_id("\nplease enter the id of the item you would like to update: ","food_menu")
 
             updated_name=input_check("\nenter the updated name (or leave blank to not update): ","str")
             if updated_name != '':update_food_sql("name",updated_name,item_id)
@@ -88,7 +88,7 @@ while continue_welcome:
             continue_welcome=False
           
             print_sql("food_menu")
-            item_del_id=input_check("\nplease enter the id of the item you would like to delete: ","int")
+            item_del_id=valid_id("\nplease enter the id of the item you would like to delete: ","food_menu")
 
             delete_sql("food_menu","product_id",item_del_id)
             close_connection()
@@ -140,7 +140,7 @@ while continue_welcome:
 
             print()
             print_sql("couriers")
-            updating_id=input_check("\nplease enter the id of the courier you would like to update: ","int")
+            updating_id=valid_id("\nplease enter the id of the courier you would like to update: ","couriers")
 
             updated_name=input_check("\nplease enter the updated name (or leave blank to not update): ","str")
             if updated_name != '':update_courier_sql("name",updated_name,updating_id)
@@ -155,12 +155,12 @@ while continue_welcome:
             print(f"\033[32m***record with id {updating_id} has been successfully updated***\033[0m")
 
 
-        #delete courier from csv
+        #delete courier from sql table
         elif usr_courier==4:
             continue_welcome=False
 
             print_sql("couriers")
-            courier_del_id=input_check("\nplease enter the id of the courier you would like to delete: ","int")
+            courier_del_id=valid_id("\nplease enter the id of the courier you would like to delete: ","couriers")
 
             delete_sql("couriers","courier_id",courier_del_id)
             close_connection()
@@ -224,9 +224,9 @@ while continue_welcome:
 
             print()
             print_sql("orders")
-            order_id=input_check("\nplease enter the order id of the order you would like to update: ","int")
+            order_id=valid_id("\nplease enter the order id of the order you would like to update: ","orders")
 
-            product_id=input_check("please enter the product id of the order you would like to update: ","int")
+            product_id=valid_id("please enter the product id of the order you would like to update: ","food_menu")
 
             updated_name=input_check("\nplease enter the customer's updated name (or leave blank to not update): ","str")
             if updated_name != '':update_order_sql("name",updated_name,order_id,product_id)
@@ -265,8 +265,8 @@ while continue_welcome:
             continue_welcome=False
           
             print_sql("orders")
-            order_del_id=input_check("\nplease enter the order id of the order you would like to delete: ","int")
-            product_del_id=input_check("please enter the product id of the order you would like to delete: ","int")
+            order_del_id=valid_id("\nplease enter the order id of the order you would like to delete: ","orders")
+            product_del_id=input_check("please enter the product id of the order you would like to delete: ","food_menu")
 
             orders_delete_sql(order_del_id,product_del_id)
             close_connection()
