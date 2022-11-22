@@ -1,9 +1,7 @@
-import ast
-from funcs import read_file_list, append_to_file, write_to_file, index_item, int_input_limit, input_check
+#connection will stay open till the end. object is created at the start and connection is closed when the application ends. its expensive to keep opening and closing
 
-food_menu_list=read_file_list("food_menu.csv")
-couriers_list=read_file_list("couriers.csv")
-orders_list=read_file_list("orders.csv")
+import ast
+from funcs import int_input_limit, input_check, print_sql, food_add_sql, courier_add_sql, delete_sql, close_connection, update_food_sql, update_courier_sql, order_add_sql, update_order_sql, orders_delete_sql
 
 # user input for welcome menu- while loop to come back to welcome menu.
 continue_welcome=True
@@ -44,52 +42,58 @@ while continue_welcome:
         #view food menu csv
         if usr_product==1:
             continue_welcome=False
-            print(food_menu_list)
+            print_sql("food_menu")
+            close_connection()
 
 
-        #adding new item to food menu csv
+        #adding new item to food menu sql db
         elif usr_product==2:
             continue_welcome=False
 
-            usr_new_product=input_check("\nenter the new item you would like to add to the menu: ","str")
-            usr_new_product_price=input_check("\nenter the price you would like to add with it as a float: ","float")
+            new_id=input_check("\nenter the new item id: ","int")
+            new_product=input_check("enter the new item name: ","str")
+            new_price=input_check("enter its price as a float: ","float")
             
-            #appending to csv file
-            append_to_file("food_menu.csv",f'{{"name": "{usr_new_product}", "price": {usr_new_product_price}}}\n')
+            #appending to sql table
+            food_add_sql(new_id,new_product,new_price)
+            close_connection()
 
-            print(f"\033[32m***{usr_new_product} has been added successfully***\033[0m")
+            print(f"\033[32m***{new_product} has been added successfully***\033[0m")
           
 
-        #replacing item
+        #UPDATE item
         elif usr_product==3:
             continue_welcome=False
           
             print()
-            #showing list items and their index positions via loop
-            index_item(food_menu_list)
-            item_index_repl=int_input_limit("\nplease enter the index of the item you would like to replace: ",(len(food_menu_list)-1))
+            #showing food menu items and their ids via sql
+            print_sql("food_menu")
+            item_id=input_check("\nplease enter the id of the item you would like to update: ","int")
 
-            new_item_name=input_check("please enter the name of the new item: ","str")
-            new_item_price=input_check("please enter the price of the new item: ","float")
+            updated_name=input_check("\nenter the updated name (or leave blank to not update): ","str")
+            if updated_name != '':update_food_sql("name",updated_name,item_id)
 
-            food_menu_list.pop(item_index_repl)
-            food_menu_list.insert(item_index_repl,f'{{"name": "{new_item_name}", "price": {new_item_price}}}')
-            write_to_file("food_menu.csv",food_menu_list)
-                
-            print(f"\033[32m***{new_item_name} has been added successfully***\033[0m")
+            updated_price=input_check("enter the updated price as a float (or enter 0 to not update): ","float")
+            if updated_price != 0:update_food_sql("price",updated_price,item_id)
+
+            updated_id=input_check("enter the updated id (or enter 0 to not update): ","int")
+            if updated_id != 0:update_food_sql("product_id",updated_id,item_id)
+
+            close_connection()
+            print(f"\033[32m***record with id {item_id} has been successfully updated***\033[0m")
 
 
-        #delete food item from csv
+        #delete food menu record from sql
         elif usr_product==4:
             continue_welcome=False
           
-            index_item(food_menu_list)
-            item_del_index=int_input_limit("\nplease enter the index of the item you would like to delete: ",(len(food_menu_list)-1))
+            print_sql("food_menu")
+            item_del_id=input_check("\nplease enter the id of the item you would like to delete: ","int")
 
-            food_menu_list.pop(item_del_index)
-            write_to_file("food_menu.csv",food_menu_list)
-                
-            print(f"\033[32m***item at index {item_del_index} has been successfully deleted***\033[0m")
+            delete_sql("food_menu","product_id",item_del_id)
+            close_connection()
+
+            print(f"\033[32m***record of item with id {item_del_id} has been successfully deleted***\033[0m")
 
           
     #courier menu
@@ -111,50 +115,57 @@ while continue_welcome:
         #view courier menu
         if usr_courier==1:
             continue_welcome=False
-            print(couriers_list)
+            print_sql("couriers")
+            close_connection()
 
 
         #adding new courier
         elif usr_courier==2:
             continue_welcome=False
 
-            usr_new_courier=input_check("\nenter the new courier's name: ","str")
-            usr_new_courier_num=input_check("\nenter their number: ","int")
+            new_id=input_check("\nenter the new courier's id: ","int")
+            new_name=input_check("enter the new courier's name: ","str")
+            new_number=input_check("enter their number: ","int")
 
-            append_to_file("couriers.csv",f'{{"name": "{usr_new_courier}", "phone": "{usr_new_courier_num}"}}\n')
+            #appending to sql table
+            courier_add_sql(new_id,new_name,new_number)
+            close_connection()
 
-            print(f"\033[32m***{usr_new_courier} has been added successfully***\033[0m")
+            print(f"\033[32m***{new_name} has been added successfully***\033[0m")
           
 
-        #replacing courier
+        #UPDATING courier
         elif usr_courier==3:
             continue_welcome=False
 
             print()
-            index_item(couriers_list)
-            courier_index_repl=int_input_limit("\nplease enter the index of the courier you would like to replace: ",(len(couriers_list)-1))
+            print_sql("couriers")
+            updating_id=input_check("\nplease enter the id of the courier you would like to update: ","int")
 
-            new_courier_name=input_check("please enter the name of the new courier: ","str")
-            new_courier_num=input_check("\nenter the courier's number: ")
+            updated_name=input_check("\nplease enter the updated name (or leave blank to not update): ","str")
+            if updated_name != '':update_courier_sql("name",updated_name,updating_id)
 
-            couriers_list.pop(courier_index_repl)
-            couriers_list.insert(courier_index_repl,f'{{"name": "{new_courier_name}", "number": {new_courier_num}}}')
-            write_to_file("couriers.csv",couriers_list)
+            updated_num=input_check("please enter the courier's updated number (or enter 0 to not update): ","int")
+            if updated_num != 0:update_courier_sql("phone_number",updated_num,updating_id)
+
+            updated_id=input_check("enter the updated id (or enter 0 to not update): ","int")
+            if updated_id != 0:update_courier_sql("courier_id",updated_id,updating_id)
                 
-            print(f"\033[32m***{new_courier_name} has been added successfully***\033[0m")
+            close_connection()
+            print(f"\033[32m***record with id {updating_id} has been successfully updated***\033[0m")
 
 
         #delete courier from csv
         elif usr_courier==4:
             continue_welcome=False
 
-            index_item(couriers_list)
-            courier_del_index=int_input_limit("\nplease enter the index of the courier you would like to delete: ",(len(couriers_list)-1))
+            print_sql("couriers")
+            courier_del_id=input_check("\nplease enter the id of the courier you would like to delete: ","int")
 
-            couriers_list.pop(courier_del_index)
-            write_to_file("couriers.csv",couriers_list)
+            delete_sql("couriers","courier_id",courier_del_id)
+            close_connection()
                 
-            print(f"\033[32m***item at index {courier_del_index} has been successfully deleted***\033[0m")
+            print(f"\033[32m***record of courier with id {courier_del_id} has been successfully deleted***\033[0m")
 
 
     #orders menu
@@ -176,7 +187,8 @@ while continue_welcome:
         #view orders
         if usr_order==1:
             continue_welcome=False
-            print(orders_list)
+            print_sql("orders")
+            close_connection()
 
 
         #add an order
@@ -184,21 +196,24 @@ while continue_welcome:
             continue_welcome=False
 
          #new order info user input
-            order_name=input_check("new order name: ","str")
-            order_address=input("new order address: ")
-            order_phone=input_check("new order phone number: ","int")
+            order_id=input_check("\nnew order id: ","int")
+            order_name=input_check("customer name for new order: ","str")
+            order_address=input("customer address for new order: ")
+            order_phone=input_check("customer phone number for new order: ","int")
+            order_status=input_check("new order status: ","str")
 
-            #printing courier and their indicies
+            #printing courier sql table and getting uder to choose courier id
             print()
-            index_item(couriers_list)           
-            order_courier=int_input_limit("enter the index of your chosen courier for the new order: ", (len(couriers_list)-1))
+            print_sql("couriers")           
+            order_courier=input_check("enter the id of your chosen courier for the new order: ", "int")
 
-            #printing food menu items and their indicies
+            #printing food menu
             print()
-            index_item(food_menu_list)                  
-            order_items=int_input_limit("enter the index of your chosen item(s) for the new order: ", (len(food_menu_list)-1))
+            print_sql("food_menu")                
+            order_item=input_check("enter the id of the item to add to the new order: ", "int")
 
-            append_to_file("orders.csv", f'{{"order_name": "{order_name}", "order_address": "{order_address}", "order_phone": "{order_phone}", "courier": {int(order_courier)}, "order_status": "preparing", "items": "{order_items}"}}\n')
+            order_add_sql(order_id, order_name,order_phone,order_address,order_courier,order_status,order_item)
+            close_connection()
 
             print(f"\033[32m***{order_name}'s order has been successfully registered***\033[0m")
 
@@ -207,37 +222,53 @@ while continue_welcome:
         if usr_order==3:
             continue_welcome=False
 
-            orders_list_dic=[ast.literal_eval(e) for e in orders_list]                
+            print()
+            print_sql("orders")
+            order_id=input_check("\nplease enter the order id of the order you would like to update: ","int")
 
-            index_item(orders_list_dic)
-            new_index=int_input_limit("\nplease enter the index of the order you wish to update: ", (len(orders_list_dic)-1))
+            product_id=input_check("please enter the product id of the order you would like to update: ","int")
 
-            new_name=input_check("please enter the updated name (or leave blank to not update): ","str")
-            if new_name != '': orders_list_dic[new_index]["order_name"]= new_name
-            new_address=input("please enter the updated address (or leave blank to not update): ")
-            if new_address != '': orders_list_dic[new_index]["order_address"]= new_address
-            new_phone=input_check("please enter the updated phone number (or leave blank to not update): ","int")
-            if new_phone != '': orders_list_dic[new_index]["order_phone"]= str(new_phone)
-            new_courier=input_check("please enter the updated courier (or leave blank to not update): ","int")
-            if new_courier != '': orders_list_dic[new_index]["courier"]= new_courier
-            new_status=input_check("please enter the updated status (or leave blank to not update): ","str")
-            if new_status != '': orders_list_dic[new_index]["order_status"]= new_status
-            new_items=input("please enter the updated items (or leave blank to not update): ")
-            if new_items != '': orders_list_dic[new_index]["items"]= new_items           
+            updated_name=input_check("\nplease enter the customer's updated name (or leave blank to not update): ","str")
+            if updated_name != '':update_order_sql("name",updated_name,order_id,product_id)
 
-            write_to_file("orders.csv",orders_list_dic)
+            updated_num=input_check("please enter the customer's updated number (or enter 0 to not update): ","int")
+            if updated_num != 0:update_order_sql("phone_number",updated_num,order_id,product_id)
 
-            print(f"\033[32m***order at index {new_index} has been successfully updated***\033[0m")
+            updated_address=input_check("please enter the updated address (or leave blank to not update): ","str")
+            if updated_address != '':update_order_sql("address",updated_address,order_id,product_id)
+
+            #printing courier menu which shows courier ids before asking for updated courier id
+            print()
+            print_sql("couriers")
+            updated_courier_id=input_check("enter the updated courier id (or enter 0 to not update): ","int")
+            if updated_courier_id != 0:update_order_sql("courier_id",updated_courier_id,order_id,product_id)
+
+            updated_order_status=input_check("please enter the updated order status (or leave blank to not update): ","str")
+            if updated_order_status != '':update_order_sql("order_status",updated_order_status,order_id,product_id)
+
+            #printing food menu which shows product ids before asking for updated product id
+            print()
+            print_sql("food_menu")
+            updated_product_id=input_check("enter the updated product id (or enter 0 to not update): ","int")
+            if updated_product_id != 0:update_order_sql("product_id",updated_product_id,order_id,product_id)
+
+            updated_id=input_check("enter the updated id (or enter 0 to not update): ","int")
+            if updated_id != 0:update_order_sql("order_id",updated_id,order_id,product_id)
+
+            close_connection()
+
+            print(f"\033[32m***order record has been successfully updated***\033[0m")
 
 
         #delete order
         if usr_order==4:
             continue_welcome=False
           
-            index_item(orders_list)
-            new_index=int_input_limit("\nplease enter the index of the order you wish to delete: ", (len(orders_list)-1))
+            print_sql("orders")
+            order_del_id=input_check("\nplease enter the order id of the order you would like to delete: ","int")
+            product_del_id=input_check("please enter the product id of the order you would like to delete: ","int")
 
-            orders_list.pop(new_index)
-            write_to_file("orders.csv",orders_list)
+            orders_delete_sql(order_del_id,product_del_id)
+            close_connection()
                 
-            print(f"\033[32m***order at index {new_index} has been successfully deleted***\033[0m")
+            print(f"\033[32m***order record has been successfully deleted***\033[0m")

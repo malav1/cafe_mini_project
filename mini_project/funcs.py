@@ -1,24 +1,96 @@
-#looping through csv, stripping "\n" and adding to list
-def read_file_list(path):
-    with open(path,"r") as file:
-        output_list=[x.strip() for x in file.readlines()]
-        return output_list
+from csv import writer
+import pymysql
 
-#appending to csv file
-def append_to_file(path,content):
-    with open(path,"a+") as file:
-        file.write(content)
+#MYSQL FUNCS
+    # Load environment variables from .env file
+host = "localhost"
+user = "root"
+password = "password"
+database = "test"
 
-#replacing old csv with contents of newly edited list. "\n" is not added if its last list element to avoid '' being counted as a list element if csv needs to be turned into list again for, eg food menu viewing.
-def write_to_file(path,usr_list):
-    with open(path,"w+") as file:
-        for e in usr_list:
-            file.write(f"{e}\n")
+    # Establish a database connection
+connection = pymysql.connect(
+    host,
+    user,
+    password,
+    database
+)
 
-#showing list items and their index positions via loop
-def index_item(usr_list):
-    for i,e in enumerate(usr_list):
-        print(f"INDEX {i}: {e}")   
+# connection object created
+connection_var = connection.cursor()
+
+#change to correct db
+connection_var.execute('USE mini_project')
+
+#ADD
+def food_add_sql(add_id,add_name,add_price):
+    sql = "INSERT INTO food_menu (product_id, name, price) VALUES (%s, %s, %s)"
+    val = (add_id,add_name,add_price)
+    connection_var.execute(sql, val)
+    connection.commit()
+
+def courier_add_sql(add_id,add_name,add_phone):
+    sql="INSERT INTO couriers (courier_id, name, phone_number) VALUES (%s, %s, %s)"
+    val = (add_id,add_name,add_phone)
+    connection_var.execute(sql,val)
+    connection.commit()
+
+def order_add_sql(add_id,add_name,add_phone,add_address,add_courier_id,add_order_status,add_product_id):
+    sql="INSERT INTO orders (order_id, name, phone_number, address, courier_id, order_status, product_id) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    val = (add_id,add_name,add_phone,add_address,add_courier_id,add_order_status,add_product_id)
+    connection_var.execute(sql,val)
+    connection.commit()
+
+#UPDATE
+def update_food_sql(column_name,new_info,prod_id):
+    if column_name!="name":
+        sql="UPDATE food_menu SET {}={} WHERE product_id={}".format(column_name,new_info,prod_id)
+    else:
+        sql="UPDATE food_menu SET {}='{}' WHERE product_id={}".format(column_name,new_info,prod_id)
+    connection_var.execute(sql)
+    connection.commit()
+
+def update_courier_sql(column_name,new_info,prod_id):
+    if column_name=="courier_id":
+        sql="UPDATE couriers SET {}={} WHERE courier_id={}".format(column_name,new_info,prod_id)
+    else:
+        sql="UPDATE couriers SET {}='{}' WHERE courier_id={}".format(column_name,new_info,prod_id)
+    connection_var.execute(sql)
+    connection.commit()
+
+def update_order_sql(column_name,new_info,order_id,prod_id):
+    if column_name in ["name","phone_number","address","order_status"]:
+        sql="UPDATE orders SET {}='{}' WHERE order_id={} AND product_id={}".format(column_name,new_info,order_id,prod_id)
+    else:
+        sql="UPDATE orders SET {}={} WHERE order_id={} AND product_id={}".format(column_name,new_info,order_id, prod_id)
+    connection_var.execute(sql)
+    connection.commit()
+
+#DELETE
+def delete_sql(table_name,id_column_name,del_id):
+    connection_var.execute("DELETE FROM {} WHERE {} = {}".format(table_name,id_column_name,del_id))
+    connection.commit()
+
+def orders_delete_sql(ord_id,prod_id):
+    connection_var.execute("DELETE FROM orders WHERE order_id = {} AND product_id={}".format(ord_id,prod_id))
+    connection.commit()
+
+#SINGLE FUNCS
+def print_sql(menu):
+    connection_var.execute(f'SELECT * FROM {menu}')
+    #gets headers
+    col_names = [i[0] for i in connection_var.description]
+    print(col_names)
+    # fetchall gets all the data from the table we defined in execute
+    rows = connection_var.fetchall()
+    for row in rows:
+        print(row)
+
+def close_connection():
+    connection_var.close()
+    connection.close()
+
+
 
 #int input error function where there is a max num user can input
 def int_input_limit(prompt,num_limit):
@@ -66,30 +138,6 @@ def input_check(prompt,data_type):
 
 
 #############TESTS#################
-
-def test_read_file_list():
-    expected=['{"first_name":"john","last_name":"smith"}']
-    actual=read_file_list("mock_file.csv")
-    assert expected==actual
-# test_read_file_list()
-
-def test_append_to_file():
-    append_to_file("mock_file.csv",'{"first_name":"tim","last_name":"roe"}')
-    expected=read_file_list("mock_file.csv")[-1]
-    assert expected=='{"first_name":"tim","last_name":"roe"}'
-# test_append_to_file()
-
-def test_write_to_file():
-    write_to_file("mock_file.csv",['{"first_name":"john","last_name":"smith"}'])
-    expected=read_file_list("mock_file.csv")
-    assert expected==['{"first_name":"john","last_name":"smith"}']
-# test_write_to_file()
-
-def test_index_item():
-    actual=index_item(['{"first_name":"john","last_name":"smith"}'])
-    expected=None
-    assert actual==expected
-# test_index_item()
 
 def test_int_input_limit():
     actual=int_input_limit("enter a number: ", 4)

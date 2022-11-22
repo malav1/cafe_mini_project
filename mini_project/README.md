@@ -6,6 +6,6 @@ the system i've created allows them to manage their food menu, couriers and orde
 
 important factors i accounted for include data persistence, testing and usability. these enabled me to meet the client brief as i included the key features the client was looking for- including other features such as invalid input handling. 
 
-if i had more time, i would include options to return to the previous menus after an action is executed by the user. This would be instead of only giving the user the option to return to the initial welcome menu. 
+if i had more time, i would include options to return to the previous menus after an action is executed by the user. I would have also implemented code to allow the user to input multiple items which the customer has ordered rather than having to do one order at a time. additionally, i would have included more checks so that the user is only able to enter a valid item id. i also would've liked to write more unit tests
 
 I enjoyed implementing testing as it was new and interesting to work around. 
